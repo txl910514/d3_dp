@@ -10,3 +10,4 @@ console.log(5,d3.selectAll('svg'));
 
 var dom = document.getElementsByTagName('svg');
 console.log(6,d3.select(dom));
+console.log(1);
