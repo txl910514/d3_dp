@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+
+        form {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            position: absolute;
+            left: 10px;
+            top: 10px;
+        }
+
+        label {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+<form>
+    <label><input type="radio" name="mode" value="grouped"> Grouped</label>
+    <label><input type="radio" name="mode" value="stacked" checked> Stacked</label>
+</form>
+<svg width="960" height="500"></svg>
+</body>
+<script type="text/javascript" src="js/d3.js"></script>
+<script type="text/javascript" src="js/grouped_bars.js"></script>
+</html>
