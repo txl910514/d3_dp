@@ -93,7 +93,7 @@
 
    (function update() {
       field
-         .each(function (d) { d.previous = d.value, d.value = 5; });
+         .each(function (d) { d.previous = d.value, d.value = (d.value - 3) <= 0 ? d.size : d.value - 3  ; });
 
       path.transition()
          .ease(d3.easeElastic)
@@ -109,15 +109,23 @@
 
       let cx = width / 2 + (height / 2.5 - 7.5) * Math.cos(alpha);
       let cy = height / 2 + (height / 2.5 - 7.5) * Math.sin(alpha);
+      svg.select("circle").remove();
+      var circle = svg.append("circle")
+              .attr("cx", cx)
+              .attr("cy", cy)
+              .attr("r", "8px")
+              .attr("fill", "white")
+              .attr("stroke", "#2ede7d")
+              .attr("stroke-width", "5px");
+      // .style('stroke', 'url(#' + linearGradient.attr("id") + ')');
 
-      svg.append("circle")
-         .attr("cx", cx)
-         .attr("cy", cy)
-         .attr("r", "8px")
-         .attr("fill", "white")
-         .attr("stroke", "#2ede7d")
-         .attr("stroke-width", "5px")
-         // .style('stroke', 'url(#' + linearGradient.attr("id") + ')');
+      circle.transition()
+              .ease(d3.easeElastic)
+              .duration(750)
+              .attr("cx", cx)
+              .attr("cy", cy)
+
+      setTimeout(update, 1000);
    })();
 
    function arcTween(b) {
