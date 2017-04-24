@@ -91,13 +91,15 @@
       .attr("class", "label")
       .attr("dy", ".35em");
 
+   var color = d3.scaleSequential(d3.interpolate("#2ede7d","#2ea6de"));
+
    (function update() {
       field
          .each(function (d) { d.previous = d.value, d.value = (d.value - 3) <= 0 ? d.size : d.value - 3  ; });
 
       path.transition()
          .ease(d3.easeElastic)
-         .duration(750)
+         .duration(2000)
          .attrTween("d", arcTween);
 
       label
@@ -116,16 +118,16 @@
               .attr("r", "8px")
               .attr("fill", "white")
               .attr("stroke", "#2ede7d")
-              .attr("stroke-width", "5px");
-      // .style('stroke', 'url(#' + linearGradient.attr("id") + ')');
+              .attr("stroke-width", "5px")
+              .style('stroke', color(fields[0].value / fields[0].size));
 
       circle.transition()
               .ease(d3.easeElastic)
-              .duration(750)
+              .duration(1750)
               .attr("cx", cx)
               .attr("cy", cy)
 
-      setTimeout(update, 1000);
+      setTimeout(update, 5000);
    })();
 
    function arcTween(b) {
