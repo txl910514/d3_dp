@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+.second-tick{
+  stroke: #000;
+	stroke-width:1;
+	fill:#000;	
+}
+</style>
+</head>
+<body>
+<script src="js/d3.js"></script>
+<script>
+var clockRadius = 200,
+	margin = 50,
+	width = (clockRadius+margin)*2,
+    height = (clockRadius+margin)*2,
+    secondTickStart = clockRadius;
+
+var secondScale = d3.scaleLinear()
+	.range([0,360])
+	.domain([0,12]);
+
+	var svg = d3.select("body").append("svg")
+	    .attr("width", width)
+	    .attr("height", height);
+
+	var face = svg.append('g')
+		.attr('transform','translate(' + (clockRadius + margin) + ',' + (clockRadius + margin) + ')');
+
+	//add marks for seconds
+	face.selectAll('.second-tick')
+		.data(d3.range(0,12)).enter()
+			.append('line')
+			.attr('class', 'second-tick')
+			.attr('x1',0)
+			.attr('x2',0)
+			.attr('y1',secondTickStart)
+			.attr('y2', function(d) {
+        return secondTickStart + Math.floor(Math.random() * 100)
+      })
+			.attr('transform',function(d){
+				return 'rotate(' + secondScale(d) + ')';
+			});
+	//and labels
+</script>
+</body>
+</html>
