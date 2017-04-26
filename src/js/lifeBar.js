@@ -52,8 +52,8 @@ data2 = {
   datas: [
     {
       name:'呼吸机',
-      value:36/50,
-      data:[36,50],
+      value:29/30,
+      data:[29,30],
       num: {
         total:50,
         current:36
@@ -61,8 +61,8 @@ data2 = {
     },
     {
       name:'血透机',
-      value:47/49,
-      data:[45,49],
+      value:28/30,
+      data:[28,30],
       num: {
         total:49,
         current:35
@@ -70,8 +70,8 @@ data2 = {
     },
     {
       name:'心电图',
-      value:34/48,
-      data:[34,48],
+      value:27/30,
+      data:[27,30],
       num: {
         total:48,
         current:34
@@ -79,8 +79,8 @@ data2 = {
     },
     {
       name:'除颤仪',
-      value:47/47,
-      data:[47,47],
+      value:26/30,
+      data:[26,30],
       num: {
         total:47,
         current:33
@@ -88,8 +88,8 @@ data2 = {
     },
     {
       name:'麻醉机',
-      value:32/46,
-      data:[32,46],
+      value:25/26,
+      data:[25,26],
       num: {
         total:46,
         current:32
@@ -97,8 +97,8 @@ data2 = {
     },
     {
       name:'监护仪',
-      value:31/45,
-      data:[31,45],
+      value:30/30,
+      data:[30,30],
       num: {
         total:45,
         current:31
@@ -130,7 +130,7 @@ var formatCount = d3.format(",.1f");
 
 var svg = d3.select('body')
     .append('svg')
-    .attr('width', 400)
+    .attr('width', 300)
     .attr('height',300);
 
 
@@ -161,10 +161,19 @@ data.scope.map(function (d,i) {
   }
 });
 
-
 var   margin = {top: 20, right: 20, bottom: 30, left: 40},
   width = +svg.attr("width") - margin.left - margin.right,
   height = +svg.attr("height") - margin.top - margin.bottom;
+
+if(data.type === 'circle') {
+  var circleArray = [];
+  data.datas.forEach(function(d) {
+    circleArray.push(d.data);
+  });
+  var mergeCircle = d3.merge(circleArray);
+  var circleLine = d3.scaleLinear().range([0, width*0.85])
+    .domain([0, d3.max(mergeCircle)]);
+}
 
 var x = d3.scaleLinear().range([0, width*0.9])
   .domain([0, d3.max(data.datas,function (d) {
@@ -260,11 +269,15 @@ function circle() {
     .attr('class', 'circleG')
     .selectAll('circle')
     .data(function (d) {
-      console.log(d);
       return d3.range(d);
     })
     .enter()
-    .append('circle');
+    .append('circle')
+    .attr('r', circleLine(30) / 30 /2)
+    .attr('fill','red')
+    .attr('transform', function (d,i) {
+      return "translate("+ (3*3/4*circleLine(30) / 30 /2* i+circleLine(30) / 30 /2) +","+ y.bandwidth()/2 +")";
+    });
 }
 
 switch (data.type) {
