@@ -19,7 +19,7 @@ var clockRadius = 200,
 
 var secondScale = d3.scaleLinear()
 	.range([0,360])
-	.domain([0,12]);
+	.domain([0,60]);
 
 	var svg = d3.select("body").append("svg")
 	    .attr("width", width)
@@ -30,7 +30,7 @@ var secondScale = d3.scaleLinear()
 
 	//add marks for seconds
 	face.selectAll('.second-tick')
-		.data(d3.range(0,12)).enter()
+		.data(d3.range(0,60)).enter()
 			.append('line')
 			.attr('class', 'second-tick')
 			.attr('x1',0)

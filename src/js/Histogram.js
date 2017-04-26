@@ -46,7 +46,7 @@ var bar = g.selectAll(".bar")
 bar.append("rect")
   .attr("x", 1)
   .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
-  .attr("height", function(d) { console.log(y(d.length)); console.log(d.length); return height - y(d.length); });
+  .attr("height", function(d) { return height - y(d.length); });
 
 bar.append("text")
   .attr("dy", ".75em")
