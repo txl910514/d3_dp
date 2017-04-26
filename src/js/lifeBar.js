@@ -257,7 +257,14 @@ function circle() {
     })
     .enter()
     .append('g')
-    .attr('class', 'circleG');
+    .attr('class', 'circleG')
+    .selectAll('circle')
+    .data(function (d) {
+      console.log(d);
+      return d3.range(d);
+    })
+    .enter()
+    .append('circle');
 }
 
 switch (data.type) {
