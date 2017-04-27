@@ -423,6 +423,35 @@ function circle_rect(shape) {
   }
 }
 
+function scope_each(ele, i, compute, colorLinear, d) {
+  data.scope.map(function (scope,m) {
+    var parent = d3.select(ele[i].parentNode);
+    var parentLine = d3.select(ele[i].parentNode.parentNode);
+    if (parent.classed('circle' + scope.gradualClass)) {
+      if(typeof scope.numScope === 'number') {
+        if(parentLine.data()[0].value <= scope.numScope) {
+          if(typeof scope.barColor === 'string') {
+            d3.select(ele[i]).style('fill', scope.barColor);
+          }
+          else if(scope.barColor.constructor === Array) {
+            d3.select(ele[i]).style('fill', compute[m](colorLinear(d)))
+          }
+        }
+      }
+      else if(scope.numScope.constructor === Array) {
+        if(parentLine.data()[0].value < scope.numScope[1] && parentLine.data()[0].value > scope.numScope[0]){
+          if(typeof scope.barColor === 'string') {
+            d3.select(ele[i]).style('fill', scope.barColor);
+          }
+          else if(scope.barColor.constructor === Array)  {
+            d3.select(ele[i]).style('fill', compute[m](colorLinear(d)));
+          }
+        }
+      }
+    }
+  });
+}
+
 function circle(circleMax, compute, colorLinear,circleLine) {
   var r = circleLine(circleMax) / (circleMax*2) /2;
   if (r > y.bandwidth()) {
@@ -445,41 +474,17 @@ function circle(circleMax, compute, colorLinear,circleLine) {
     .append('circle')
     .attr('r', r)
     .attr('transform', function (d,i, ele) {
-      data.scope.map(function (scope,m) {
-        var parent = d3.select(ele[i].parentNode);
-        var parentLine = d3.select(ele[i].parentNode.parentNode);
-        if (parent.classed('circle' + scope.gradualClass)) {
-          if(typeof scope.numScope === 'number') {
-            if(parentLine.data()[0].value <= scope.numScope) {
-              if(typeof scope.barColor === 'string') {
-                d3.select(ele[i]).style('fill', scope.barColor);
-              }
-              else if(scope.barColor.constructor === Array) {
-                d3.select(ele[i]).style('fill', compute[m](colorLinear(d)))
-              }
-            }
-          }
-          else if(scope.numScope.constructor === Array) {
-            if(parentLine.data()[0].value < scope.numScope[1] && parentLine.data()[0].value > scope.numScope[0]){
-              if(typeof scope.barColor === 'string') {
-                d3.select(ele[i]).style('fill', scope.barColor);
-              }
-              else if(scope.barColor.constructor === Array)  {
-                d3.select(ele[i]).style('fill', compute[m](colorLinear(d)));
-              }
-            }
-          }
-        }
-      });
+      scope_each(ele,i, compute, colorLinear, d);
       return "translate("+ (circleLine(d)+r) +","+ y.bandwidth()/2 +")";
     });
 }
 
 function rect(circleMax, compute, colorLinear,circleLine) {
   var r = circleLine(circleMax) / (circleMax*2) /2;
-  if (r > y.bandwidth()) {
+/*  if (r > y.bandwidth()) {
     r = y.bandwidth();
-  }
+  }*/
+
   var circleG = bar.selectAll('.circleG')
     .data(function (d) {
       return d.data;
@@ -495,36 +500,11 @@ function rect(circleMax, compute, colorLinear,circleLine) {
     })
     .enter()
     .append('rect')
-    .attr('width', r)
-    .attr('height',r)
+    .attr('width', circleLine(1) - circleLine(0)-1)
+    .attr('height',y.bandwidth())
     .attr('transform', function (d,i, ele) {
-      data.scope.map(function (scope,m) {
-        var parent = d3.select(ele[i].parentNode);
-        var parentLine = d3.select(ele[i].parentNode.parentNode);
-        if (parent.classed('circle' + scope.gradualClass)) {
-          if(typeof scope.numScope === 'number') {
-            if(parentLine.data()[0].value <= scope.numScope) {
-              if(typeof scope.barColor === 'string') {
-                d3.select(ele[i]).style('fill', scope.barColor);
-              }
-              else if(scope.barColor.constructor === Array) {
-                d3.select(ele[i]).style('fill', compute[m](colorLinear(d)))
-              }
-            }
-          }
-          else if(scope.numScope.constructor === Array) {
-            if(parentLine.data()[0].value < scope.numScope[1] && parentLine.data()[0].value > scope.numScope[0]){
-              if(typeof scope.barColor === 'string') {
-                d3.select(ele[i]).style('fill', scope.barColor);
-              }
-              else if(scope.barColor.constructor === Array)  {
-                d3.select(ele[i]).style('fill', compute[m](colorLinear(d)));
-              }
-            }
-          }
-        }
-      });
-      return "translate("+ (circleLine(d)+r) +","+ y.bandwidth()/2 +")";
+      scope_each(ele,i, compute, colorLinear, d);
+      return "translate("+ (circleLine(d)) +","+ y.bandwidth()/2 +")";
     });
 }
 
