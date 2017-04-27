@@ -27,7 +27,32 @@ data1 = {
     {
       name:'监护仪',
       value:0.99
-    }],
+    },
+    {
+      name:'呼吸机1',
+      value:0.14
+    },
+    {
+      name:'血透机1',
+      value:0.56
+    },
+    {
+      name:'心电图1',
+      value:0.53578
+    },
+    {
+      name:'除颤仪1',
+      value:0.871
+    },
+    {
+      name:'麻醉机1',
+      value:1
+    },
+    {
+      name:'监护仪1',
+      value:0.98
+    }
+  ],
   scope:[
     {
       numScope:1,
@@ -52,85 +77,192 @@ data2 = {
   datas: [
     {
       name:'呼吸机',
-      value:29/30,
-      data:[29,30],
-      num: {
-        total:50,
-        current:36
-      }
+      value:10/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:10
+      }]
     },
     {
       name:'血透机',
-      value:28/30,
-      data:[28,30],
-      num: {
-        total:49,
-        current:35
-      }
+      value:9.6/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:9
+      }]
     },
     {
       name:'心电图',
-      value:27/30,
-      data:[27,30],
-      num: {
-        total:48,
-        current:34
-      }
+      value:8/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:8
+      }]
     },
     {
       name:'除颤仪',
-      value:26/30,
-      data:[26,30],
-      num: {
-        total:47,
-        current:33
-      }
+      value:7/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:7
+      }]
     },
     {
       name:'麻醉机',
-      value:25/26,
-      data:[25,26],
-      num: {
-        total:46,
-        current:32
-      }
+      value:6/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:6
+      }]
     },
     {
       name:'监护仪',
-      value:30/30,
-      data:[30,30],
-      num: {
-        total:45,
-        current:31
-      }
+      value:5/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:5
+      }]
     }],
   scope:[
     {
       numScope:1,
       textColor:'#fff',
+      gradualClass:'current',
       barColor:['#2ea6de','#2ede7d']
     },
     {
       numScope:[0.95,1],
       textColor:'#b2bb22',
+      gradualClass:'current',
       barColor:['#aebb20','#e8bd3a']
     },
     {
       numScope:[0,0.95],
       textColor:'#ee6d6d',
+      gradualClass:'current',
       barColor:['#ee6d6d','#f4a856']
     }
   ],
   type:'circle'
 };
 
-data = data2;
+data3 = {
+  datas: [
+    {
+      name:'呼吸机',
+      value:10/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:10
+      }]
+    },
+    {
+      name:'血透机',
+      value:9.6/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:9
+      }]
+    },
+    {
+      name:'心电图',
+      value:8/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:8
+      }]
+    },
+    {
+      name:'除颤仪',
+      value:7/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:7
+      }]
+    },
+    {
+      name:'麻醉机',
+      value:6/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:6
+      }]
+    },
+    {
+      name:'监护仪',
+      value:5/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:5
+      }]
+    }
+  ],
+  scope:[
+    {
+      numScope:1,
+      textColor:'#fff',
+      gradualClass:'current',
+      barColor:['#2ea6de','#2ede7d']
+    },
+    {
+      numScope:[0.95,1],
+      textColor:'#b2bb22',
+      gradualClass:'current',
+      barColor:['#aebb20','#e8bd3a']
+    },
+    {
+      numScope:[0,0.95],
+      textColor:'#ee6d6d',
+      gradualClass:'current',
+      barColor:['#ee6d6d','#f4a856']
+    }
+  ],
+  type:'rect'
+};
+
+data = data3;
 
 var formatCount = d3.format(",.1f");
 
 var svg = d3.select('body')
     .append('svg')
-    .attr('width', 300)
+    .attr('width', 350)
     .attr('height',300);
 
 
@@ -139,41 +271,15 @@ var linearGradient;
 
 
 
-data.scope.map(function (d,i) {
-  if(typeof d.barColor === 'string'){
 
-  }
-  else if(d.barColor.constructor === Array){
-    defs = svg.append("defs");
-    linearGradient = defs.append("linearGradient")
-      .attr("id", "linearColor"+i)
-      .attr("x1", "0%")
-      .attr("y1", "0%")
-      .attr("x2", "100%")
-      .attr("y2", "0%");
-    linearGradient.append("stop")
-      .attr("offset", "0%")
-      .style("stop-color", d.barColor[0]);
 
-    linearGradient.append("stop")
-      .attr("offset", "100%")
-      .style("stop-color", d.barColor[1]);
-  }
-});
-
-var   margin = {top: 20, right: 20, bottom: 30, left: 40},
+var   margin = {top: 10, right: 50, bottom: 10, left: 10},
   width = +svg.attr("width") - margin.left - margin.right,
   height = +svg.attr("height") - margin.top - margin.bottom;
 
-if(data.type === 'circle') {
-  var circleArray = [];
-  data.datas.forEach(function(d) {
-    circleArray.push(d.data);
-  });
-  var mergeCircle = d3.merge(circleArray);
-  var circleLine = d3.scaleLinear().range([0, width*0.85])
-    .domain([0, d3.max(mergeCircle)]);
-}
+var svgG = svg.append('g')
+  .attr('transform', "translate("+ margin.left+ ","+ margin.top +")");
+
 
 var x = d3.scaleLinear().range([0, width*0.9])
   .domain([0, d3.max(data.datas,function (d) {
@@ -183,7 +289,7 @@ var x = d3.scaleLinear().range([0, width*0.9])
 var y = d3.scaleBand().rangeRound([0, height]).padding(0.85)
   .domain(data.datas.map(function(d) { return d.name; }));
 
-var bar = svg.selectAll("g")
+var bar = svgG.selectAll("g")
   .data(data.datas)
   .enter().append("g")
   .attr("transform", function(d, i) { return "translate(0," + y(d.name) + ")"; });
@@ -216,18 +322,39 @@ bar.append("text")
     return formatCount(d.value*100) +'%';
   })
   .attr('transform', function (d) {
-    return "translate("+(width - x(d.value*100))+",0)";
+    return "translate("+(width - x(d.value*100)-margin.left)+",0)";
   });
 
 bar.append("text")
   .attr('x',0)
-  .attr('y',-y.bandwidth())
+  .attr('y',-y.bandwidth()-2)
   .attr('class','nameText')
   .text(function (d) {
     return d.name;
   });
 
 function complete() {
+  data.scope.map(function (d,i) {
+    if(typeof d.barColor === 'string'){
+
+    }
+    else if(d.barColor.constructor === Array){
+      defs = svg.append("defs");
+      linearGradient = defs.append("linearGradient")
+        .attr("id", "linearColor"+i)
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "100%")
+        .attr("y2", "0%");
+      linearGradient.append("stop")
+        .attr("offset", "0%")
+        .style("stop-color", d.barColor[0]);
+
+      linearGradient.append("stop")
+        .attr("offset", "100%")
+        .style("stop-color", d.barColor[1]);
+    }
+  });
   bar.append("rect")
     .attr("width", function(d,i,ele) {
       data.scope.map(function (scope,m) {
@@ -259,24 +386,145 @@ function complete() {
     .attr('rx',4);
 }
 
-function circle() {
+function circle_rect(shape) {
+  var circleArray = [];
+  data.datas.forEach(function(d) {
+    circleArray.push(d.data);
+  });
+  var mergeCircle = d3.merge(circleArray);
+  var circleLine = d3.scaleLinear().range([0, width*0.9])
+    .domain([0, d3.max(mergeCircle, function (d) {
+      return d.num;
+    })]);
+  var compute = [];
+  data.scope.map(function (d,i) {
+    if(typeof d.barColor === 'string'){
+
+    }
+    else if(d.barColor.constructor === Array){
+      compute[i] = d3.interpolate(d.barColor[0], d.barColor[1]);
+    }
+  });
+  var circleMax = d3.max(mergeCircle,function (d) {
+    return d.num;
+  });
+  var colorLinear = d3.scaleLinear()
+    .domain([0,circleMax])
+    .range([0,1]);
+  switch (shape) {
+    case 'circle':
+      circle(circleMax, compute, colorLinear,circleLine);
+      break;
+    case 'rect':
+      rect(circleMax, compute, colorLinear,circleLine);
+      break;
+    default:
+      break;
+  }
+}
+
+function circle(circleMax, compute, colorLinear,circleLine) {
+  var r = circleLine(circleMax) / (circleMax*2) /2;
+  if (r > y.bandwidth()) {
+    r = y.bandwidth();
+  }
   var circleG = bar.selectAll('.circleG')
     .data(function (d) {
       return d.data;
     })
     .enter()
     .append('g')
-    .attr('class', 'circleG')
+    .attr('class', function (d) {
+      return 'circleG circle'+d.className;
+    })
     .selectAll('circle')
     .data(function (d) {
-      return d3.range(d);
+      return d3.range(d.num);
     })
     .enter()
     .append('circle')
-    .attr('r', circleLine(30) / 30 /2)
-    .attr('fill','red')
-    .attr('transform', function (d,i) {
-      return "translate("+ (3*3/4*circleLine(30) / 30 /2* i+circleLine(30) / 30 /2) +","+ y.bandwidth()/2 +")";
+    .attr('r', r)
+    .attr('transform', function (d,i, ele) {
+      data.scope.map(function (scope,m) {
+        var parent = d3.select(ele[i].parentNode);
+        var parentLine = d3.select(ele[i].parentNode.parentNode);
+        if (parent.classed('circle' + scope.gradualClass)) {
+          if(typeof scope.numScope === 'number') {
+            if(parentLine.data()[0].value <= scope.numScope) {
+              if(typeof scope.barColor === 'string') {
+                d3.select(ele[i]).style('fill', scope.barColor);
+              }
+              else if(scope.barColor.constructor === Array) {
+                d3.select(ele[i]).style('fill', compute[m](colorLinear(d)))
+              }
+            }
+          }
+          else if(scope.numScope.constructor === Array) {
+            if(parentLine.data()[0].value < scope.numScope[1] && parentLine.data()[0].value > scope.numScope[0]){
+              if(typeof scope.barColor === 'string') {
+                d3.select(ele[i]).style('fill', scope.barColor);
+              }
+              else if(scope.barColor.constructor === Array)  {
+                d3.select(ele[i]).style('fill', compute[m](colorLinear(d)));
+              }
+            }
+          }
+        }
+      });
+      return "translate("+ (circleLine(d)+r) +","+ y.bandwidth()/2 +")";
+    });
+}
+
+function rect(circleMax, compute, colorLinear,circleLine) {
+  var r = circleLine(circleMax) / (circleMax*2) /2;
+  if (r > y.bandwidth()) {
+    r = y.bandwidth();
+  }
+  var circleG = bar.selectAll('.circleG')
+    .data(function (d) {
+      return d.data;
+    })
+    .enter()
+    .append('g')
+    .attr('class', function (d) {
+      return 'circleG circle'+d.className;
+    })
+    .selectAll('rect')
+    .data(function (d) {
+      return d3.range(d.num);
+    })
+    .enter()
+    .append('rect')
+    .attr('width', r)
+    .attr('height',r)
+    .attr('transform', function (d,i, ele) {
+      data.scope.map(function (scope,m) {
+        var parent = d3.select(ele[i].parentNode);
+        var parentLine = d3.select(ele[i].parentNode.parentNode);
+        if (parent.classed('circle' + scope.gradualClass)) {
+          if(typeof scope.numScope === 'number') {
+            if(parentLine.data()[0].value <= scope.numScope) {
+              if(typeof scope.barColor === 'string') {
+                d3.select(ele[i]).style('fill', scope.barColor);
+              }
+              else if(scope.barColor.constructor === Array) {
+                d3.select(ele[i]).style('fill', compute[m](colorLinear(d)))
+              }
+            }
+          }
+          else if(scope.numScope.constructor === Array) {
+            if(parentLine.data()[0].value < scope.numScope[1] && parentLine.data()[0].value > scope.numScope[0]){
+              if(typeof scope.barColor === 'string') {
+                d3.select(ele[i]).style('fill', scope.barColor);
+              }
+              else if(scope.barColor.constructor === Array)  {
+                d3.select(ele[i]).style('fill', compute[m](colorLinear(d)));
+              }
+            }
+          }
+        }
+      });
+      return "translate("+ (circleLine(d)+r) +","+ y.bandwidth()/2 +")";
     });
 }
 
@@ -285,7 +533,10 @@ switch (data.type) {
     complete();
     break;
   case 'circle':
-    circle();
+    circle_rect(data.type);
+    break;
+  case 'rect':
+    circle_rect(data.type);
     break;
   default:
     break;
