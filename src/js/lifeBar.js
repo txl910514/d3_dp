@@ -1,7 +1,7 @@
 /**
  * Created by txl-pc on 2017/4/25.
  */
-var data1, data2, data3;
+var data1, data2, data3, data4;
 data1 = {
   datas: [
     {
@@ -27,30 +27,6 @@ data1 = {
     {
       name:'监护仪',
       value:0.99
-    },
-    {
-      name:'呼吸机1',
-      value:0.14
-    },
-    {
-      name:'血透机1',
-      value:0.56
-    },
-    {
-      name:'心电图1',
-      value:0.53578
-    },
-    {
-      name:'除颤仪1',
-      value:0.871
-    },
-    {
-      name:'麻醉机1',
-      value:1
-    },
-    {
-      name:'监护仪1',
-      value:0.98
     }
   ],
   scope:[
@@ -179,13 +155,13 @@ data3 = {
     },
     {
       name:'血透机',
-      value:9.6/10,
+      value:9.99/10,
       data:[{
         className:'total',
         num:10
       },{
         className:'current',
-        num:9
+        num:9.99
       }]
     },
     {
@@ -201,13 +177,13 @@ data3 = {
     },
     {
       name:'除颤仪',
-      value:7/10,
+      value:8.88/10,
       data:[{
         className:'total',
         num:10
       },{
         className:'current',
-        num:7
+        num:8.88
       }]
     },
     {
@@ -256,7 +232,98 @@ data3 = {
   type:'rect'
 };
 
-data = data3;
+data4 = {
+  datas: [
+    {
+      name:'呼吸机',
+      value:10/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:10
+      }]
+    },
+    {
+      name:'血透机',
+      value:9.6/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:9
+      }]
+    },
+    {
+      name:'心电图',
+      value:8/15,
+      data:[{
+        className:'total',
+        num:15
+      },{
+        className:'current',
+        num:8
+      }]
+    },
+    {
+      name:'除颤仪',
+      value:7/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:7
+      }]
+    },
+    {
+      name:'麻醉机',
+      value:6/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:6
+      }]
+    },
+    {
+      name:'监护仪',
+      value:5/10,
+      data:[{
+        className:'total',
+        num:10
+      },{
+        className:'current',
+        num:5
+      }]
+    }],
+  scope:[
+    {
+      numScope:1,
+      textColor:'#fff',
+      gradualClass:'current',
+      barColor:['#2ea6de','#2ede7d']
+    },
+    {
+      numScope:[0.95,1],
+      textColor:'#b2bb22',
+      gradualClass:'current',
+      barColor:['#aebb20','#e8bd3a']
+    },
+    {
+      numScope:[0,0.95],
+      textColor:'#ee6d6d',
+      gradualClass:'current',
+      barColor:['#ee6d6d','#f4a856']
+    }
+  ],
+  type:'complete_context'
+};
+
+data = data4;
 
 var formatCount = d3.format(",.1f");
 
@@ -333,7 +400,63 @@ bar.append("text")
     return d.name;
   });
 
-function complete() {
+
+function scope_each(ele, i, compute, colorLinear, d, figureName) {
+  data.scope.map(function (scope,m) {
+    var parent = d3.select(ele[i].parentNode);
+    var parentLine = d3.select(ele[i].parentNode.parentNode);
+    if (parent.classed(figureName + scope.gradualClass)) {
+      if(typeof scope.numScope === 'number') {
+        if(parentLine.data()[0].value <= scope.numScope) {
+          if(typeof scope.barColor === 'string') {
+            d3.select(ele[i]).style('fill', scope.barColor);
+          }
+          else if(scope.barColor.constructor === Array) {
+            if (figureName === 'context') {
+              d3.select(ele[i]).style('fill', 'url(#'+ scope.gradualClass +'_linearColor'+ m +')');
+            }
+            else {
+              d3.select(ele[i]).style('fill', compute[m](colorLinear(d)));
+            }
+          }
+        }
+      }
+      else if(scope.numScope.constructor === Array) {
+        if(parentLine.data()[0].value < scope.numScope[1] && parentLine.data()[0].value > scope.numScope[0]){
+          if(typeof scope.barColor === 'string') {
+            d3.select(ele[i]).style('fill', scope.barColor);
+          }
+          else if(scope.barColor.constructor === Array)  {
+            if (figureName === 'context') {
+              d3.select(ele[i]).style('fill', 'url(#'+ scope.gradualClass +'_linearColor'+ m +')');
+            }
+            else {
+              d3.select(ele[i]).style('fill', compute[m](colorLinear(d)));
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function maxLineScale() {
+  var circleArray = [];
+  data.datas.forEach(function(d) {
+    circleArray.push(d.data);
+  });
+  var mergeCircle = d3.merge(circleArray);
+  var circleLine = d3.scaleLinear().range([0, width*0.9])
+    .domain([0, d3.max(mergeCircle, function (d) {
+      return d.num;
+    })]);
+  return {
+    mergeCircle:mergeCircle,
+    circleLine:circleLine
+  };
+}
+
+function gradualColor() {
   data.scope.map(function (d,i) {
     if(typeof d.barColor === 'string'){
 
@@ -341,7 +464,7 @@ function complete() {
     else if(d.barColor.constructor === Array){
       defs = svg.append("defs");
       linearGradient = defs.append("linearGradient")
-        .attr("id", "linearColor"+i)
+        .attr("id", d.gradualClass ? d.gradualClass +"_linearColor"+i : "linearColor"+i)
         .attr("x1", "0%")
         .attr("y1", "0%")
         .attr("x2", "100%")
@@ -355,6 +478,10 @@ function complete() {
         .style("stop-color", d.barColor[1]);
     }
   });
+}
+
+function complete() {
+  gradualColor();
   bar.append("rect")
     .attr("width", function(d,i,ele) {
       data.scope.map(function (scope,m) {
@@ -387,15 +514,7 @@ function complete() {
 }
 
 function circle_rect(shape) {
-  var circleArray = [];
-  data.datas.forEach(function(d) {
-    circleArray.push(d.data);
-  });
-  var mergeCircle = d3.merge(circleArray);
-  var circleLine = d3.scaleLinear().range([0, width*0.9])
-    .domain([0, d3.max(mergeCircle, function (d) {
-      return d.num;
-    })]);
+  var maxScale = maxLineScale();
   var compute = [];
   data.scope.map(function (d,i) {
     if(typeof d.barColor === 'string'){
@@ -405,7 +524,7 @@ function circle_rect(shape) {
       compute[i] = d3.interpolate(d.barColor[0], d.barColor[1]);
     }
   });
-  var circleMax = d3.max(mergeCircle,function (d) {
+  var circleMax = d3.max(maxScale.mergeCircle,function (d) {
     return d.num;
   });
   var colorLinear = d3.scaleLinear()
@@ -413,44 +532,16 @@ function circle_rect(shape) {
     .range([0,1]);
   switch (shape) {
     case 'circle':
-      circle(circleMax, compute, colorLinear,circleLine);
+      circle(circleMax, compute, colorLinear,maxScale.circleLine);
       break;
     case 'rect':
-      rect(circleMax, compute, colorLinear,circleLine);
+      rect(circleMax, compute, colorLinear,maxScale.circleLine);
       break;
     default:
       break;
   }
 }
 
-function scope_each(ele, i, compute, colorLinear, d) {
-  data.scope.map(function (scope,m) {
-    var parent = d3.select(ele[i].parentNode);
-    var parentLine = d3.select(ele[i].parentNode.parentNode);
-    if (parent.classed('circle' + scope.gradualClass)) {
-      if(typeof scope.numScope === 'number') {
-        if(parentLine.data()[0].value <= scope.numScope) {
-          if(typeof scope.barColor === 'string') {
-            d3.select(ele[i]).style('fill', scope.barColor);
-          }
-          else if(scope.barColor.constructor === Array) {
-            d3.select(ele[i]).style('fill', compute[m](colorLinear(d)))
-          }
-        }
-      }
-      else if(scope.numScope.constructor === Array) {
-        if(parentLine.data()[0].value < scope.numScope[1] && parentLine.data()[0].value > scope.numScope[0]){
-          if(typeof scope.barColor === 'string') {
-            d3.select(ele[i]).style('fill', scope.barColor);
-          }
-          else if(scope.barColor.constructor === Array)  {
-            d3.select(ele[i]).style('fill', compute[m](colorLinear(d)));
-          }
-        }
-      }
-    }
-  });
-}
 
 function circle(circleMax, compute, colorLinear,circleLine) {
   var r = circleLine(circleMax) / (circleMax*2) /2;
@@ -474,25 +565,25 @@ function circle(circleMax, compute, colorLinear,circleLine) {
     .append('circle')
     .attr('r', r)
     .attr('transform', function (d,i, ele) {
-      scope_each(ele,i, compute, colorLinear, d);
+      scope_each(ele,i, compute, colorLinear, d, 'circle');
       return "translate("+ (circleLine(d)+r) +","+ y.bandwidth()/2 +")";
     });
 }
 
 function rect(circleMax, compute, colorLinear,circleLine) {
-  var r = circleLine(circleMax) / (circleMax*2) /2;
+  //var r = circleLine(circleMax) / (circleMax*2) /2;
 /*  if (r > y.bandwidth()) {
     r = y.bandwidth();
   }*/
 
-  var circleG = bar.selectAll('.circleG')
+  bar.selectAll('.rectG')
     .data(function (d) {
       return d.data;
     })
     .enter()
     .append('g')
     .attr('class', function (d) {
-      return 'circleG circle'+d.className;
+      return 'rectG rect'+d.className;
     })
     .selectAll('rect')
     .data(function (d) {
@@ -503,9 +594,36 @@ function rect(circleMax, compute, colorLinear,circleLine) {
     .attr('width', circleLine(1) - circleLine(0)-1)
     .attr('height',y.bandwidth())
     .attr('transform', function (d,i, ele) {
-      scope_each(ele,i, compute, colorLinear, d);
+      scope_each(ele,i, compute, colorLinear, d,'rect');
       return "translate("+ (circleLine(d)) +","+ y.bandwidth()/2 +")";
     });
+}
+
+function complete_context() {
+  gradualColor();
+  var maxCompleteScale = maxLineScale();
+  bar.selectAll('.complete_contextG')
+    .data(function (d) {
+      return d.data;
+    })
+    .enter()
+    .append('g')
+    .attr('class', function (d) {
+      return 'contextG context'+d.className;
+    })
+    .selectAll('rect')
+    .data(function (d) {
+      return [d.num];
+    })
+    .enter()
+    .append('rect')
+    .attr('width', function (d,i, ele) {
+      scope_each(ele,i, null, null, d, 'context');
+      return maxCompleteScale.circleLine(d);
+    })
+    .attr('height', y.bandwidth())
+    .attr('rx',4)
+    .attr('ry',4);
 }
 
 switch (data.type) {
@@ -517,6 +635,9 @@ switch (data.type) {
     break;
   case 'rect':
     circle_rect(data.type);
+    break;
+  case 'complete_context':
+    complete_context(data.type);
     break;
   default:
     break;
