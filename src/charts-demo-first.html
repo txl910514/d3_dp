@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>曲线-面积-渐变图</title>
+	<meta charset="utf-8">
+	<style type="text/css">
+        body{background: #1f2a33;}
+		.axis--x line,.axis--y line {stroke-opacity:.2;}
+		.axis--x path,.axis--y path { display: none;}
+		.line { fill: none; stroke-width: 1.5px; stroke-linejoin: round; stroke-linecap: round;}
+		.price{stroke: #16eae6;}
+		.circle{fill:#16eae6;}
+	</style>
+</head>
+<body>
+<svg width="1000" height="400"></svg>
+
+
+<script type="text/javascript" src="http://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript">
+var xNum = ["1月","2月","3月","4月","5月","6月"],
+      yLengthL = 100, //左边Y轴最高值
+      xLength  = xNum.length,  //X轴刻度数量
+      xTickNum = [];
+for(var i =0;i<= xLength;i++){
+    xTickNum.push(i);
+}
+xData = [  //画曲线，点使用
+	{x:0,y:10},
+	{x:1,y:50},
+	{x:2,y:30},
+	{x:3,y:10},
+	{x:4,y:90},
+	{x:5,y:40}
+]
+var areaDataY = [10,50,30,10,90,40]  //画面积图使用
+
+
+var svg = d3.select("svg"),
+    margin = {top: 40, left: 90, bottom: 100, right: 100},
+    width  = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom;
+
+//两条轴线的比例尺
+var xScale  = d3.scaleLinear().domain([0,xLength]).range([0,width]),
+    yScaleL = d3.scaleLinear().domain([0,yLengthL]).range([height, 0]);
+
+var xAxis = d3.axisBottom(xScale)
+        .tickValues(xTickNum)   //指定刻度
+        .tickFormat(formatTick)  //对指定刻度进行转换
+
+
+var g = svg.append('g').attr("transform","translate("+margin.left+","+margin.top+")");
+
+
+//创建x轴
+g.append("g").attr("class","axis--x").attr("transform","translate(0,"+yScaleL(0)+")")
+    .call(xAxis)
+    .selectAll(".tick text")
+    .attr("text-anchor","middle")
+    .attr('transform','translate('+(width/xLength)+',0)')
+    .style("fill","#899baa")
+
+
+
+//创建y轴(左边)
+var g_y = g.append("g").attr("class","axis--y left")
+    g_y.call(d3.axisLeft(yScaleL).tickSize(width)).selectAll('line').style('stroke','#FFF').attr('opacity','0.2');
+    g_y.call(d3.axisLeft(yScaleL).tickSize(-width)).selectAll("text").style("stroke","#899baa");
+
+
+var line_L = d3.line()
+    .x(function(d) { return  xScale(d.x); })
+    .y(function(d) { return  yScaleL(d.y); })
+    .curve(d3.curveCatmullRom.alpha(0.5));
+
+//定义渐变
+var defs = svg.append("defs");
+var linearGradient = defs.append("linearGradient")
+        .attr("id","linearColor")
+        .attr("x1","0%")
+        .attr("y1","0%")
+        .attr("x2","100%")
+        .attr("y2","0%");
+var stop1 = linearGradient.append("stop")
+        .attr("offset","0%")
+        .style("stop-color",'#2ede7d');
+
+var stop2 = linearGradient.append("stop")
+        .attr("offset","100%")
+        .style("stop-color",'#2ea6de');
+var color = d3.scaleSequential(d3.interpolate("#2ede7d","#2ea6de"));
+
+
+//定义符号生成器
+var symbol = d3.symbol();
+
+var path =  g.append("g").attr("class","path").attr('transform','translate('+(width/xLength)+',0)');
+
+//画出面积图
+var g = d3.select("svg")
+        .append("g")
+        .attr("transform","translate("+margin.left+","+margin.top+")")
+var area_generator = d3.area()//d3中绘制面积的函数
+        .x(function(d, i){return xScale(i);})//曲线中x的值
+        .y0(height)//相当于x坐标
+        .y1(function(d){return yScaleL(d);})//曲线中y的值
+        .curve(d3.curveCatmullRom.alpha(0.5))//把曲线设置光滑
+
+d3.select("g.path")
+        .append("path")
+        .attr('opacity','0.4')
+        .attr("d", area_generator(areaDataY))
+        .style("fill","url(#" + linearGradient.attr("id") + ")");
+
+
+var price_g = path.append("g");
+    //画出曲线
+    price_g.call(createLine,xData,"line price",line_L);
+    //画出曲线上的圆形
+    price_g.call(createSymbol,xData,"circle",d3.symbolCircle,yScaleL);
+
+//创建每个节点上的符号
+function createSymbol(container,datas,className,symbols,yScale){
+    container.selectAll("."+className)
+            .data(datas)
+            .enter()
+            .append("path")
+            .attr("d", symbol.type(symbols))
+            .attr("fill", "white")
+            .attr('transform',function(d){
+                return 'translate('+xScale(d.x)+','+yScale(d.y)+')';
+            })
+            .attr("stroke-width", "3px")
+            .style('stroke', function(d){
+                return color(xScale(d.x)/width)
+            });
+}
+//创建曲线
+function createLine(container,datas,className,line){
+     container.append("path")
+          .datum(datas)
+          .attr("class", className)
+          .attr("d", line)
+          .style("stroke","url(#" + linearGradient.attr("id") + ")");
+}
+//取每个刻度对应的日期
+function formatTick(d,i){
+    return xNum[i];
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<svg width="960" height="500">
+    <defs>
+
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+
+            <stop offset="0%" style="stop-color:rgb(46,170,216);stop-opacity:1" />
+
+            <stop offset="100%" style="stop-color:rgb(46,170,216);stop-opacity:0.2" />
+
+        </linearGradient>
+
+    </defs>
+
+    <defs>
+        <linearGradient id="grad2">
+            <stop offset="0%" stop-color="#2ea6de"/>
+            <stop offset="100%" stop-color="#2edd7e"/>
+        </linearGradient>
+    </defs>
+
+
+</svg>
+
+
+<style>
+html{
+    background:#1f2a33
+
+}
+.tick line{
+    color: #F00;
+}
+</style>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+
+
+
+    var svg = d3.select("svg"),
+        margin = {top: 20, right: 20, bottom: 30, left: 50},
+        width = +svg.attr("width") - margin.left - margin.right,
+        height = +svg.attr("height") - margin.top - margin.bottom,
+        g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var parseTime = d3.timeParse("%d-%b-%y");
+
+    var x = d3.scaleBand()
+        .range([0, width])
+        .paddingInner(0.7)
+        .paddingOuter(0.5)
+
+
+    var color = d3.scaleLinear()
+        .range(["#2ea6de", "#2edd7e"])
+        .interpolate(d3.interpolateRgb);
+
+    var y = d3.scaleLinear()
+        .rangeRound([height, 0]);
+
+    var area = d3.area()
+        .x(function(d) {
+
+            return x(d.date); })
+        .y1(function(d) { return y(d.close); });
+
+
+
+    var line = d3.line()
+        .x(function(d) { return x(d.date); })
+        .y(function(d) { return y(d.close); });
+
+
+
+
+
+    d3.tsv("data.tsv", function(d) {
+//        d.date = parseTime(d.date);
+        d.close = +d.close;
+        return d;
+    }, function(error, data) {
+        if (error) throw error;
+
+
+        x.domain(data.map(function(d) { return d.date; }));
+
+        color.domain([0,1]);
+
+        y.domain([0, 20+d3.max(data, function(d) { return d.close; })]);
+
+        area.y0(y(0));
+        area.curve(d3.curveCatmullRom.alpha(0.5));
+        line.curve(d3.curveCatmullRom.alpha(0.5));
+
+        g.append("g")
+            .attr("class","area_block")
+            .append("path")
+            .datum(data)
+            .attr("fill", "url(#grad1)")
+            .attr("d", area);
+
+        var aixB=g.append("g")
+            .attr("class","x_axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x))
+
+            aixB.selectAll("text").style("stroke","#899baa")
+            aixB.selectAll("line").style("display","none")
+//            .attr("fill", "#899BAA");
+
+        var aixL=g.append("g")
+            .attr("class","y_axis")
+            .call(d3.axisLeft(y).tickSize(-width))
+            aixL.selectAll("line")
+            .style('stroke','#FFF')
+            .attr('opacity','0.2');
+            aixL.selectAll("text").style("stroke","#899baa")
+
+        g.append("g")
+            .attr("class","area_block")
+            .append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", "url(#grad2)")
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("stroke-width", 4.5)
+            .attr("d", line);
+        //
+
+        g.append("g").attr("class","dots")
+        g.select(".dots").selectAll(".dot")
+            .data(data)
+            .enter().append("circle")
+            .attr("class", "dot")
+            .attr("r", 6.5)
+            .attr("stroke-width",4)
+            .attr("stroke",function(d,i,array){
+                return color(i/array.length)})
+            .attr("cx", function(d) { return x(d.date); })
+            .attr("cy", function(d) { return y(d.close); })
+            .style("fill", function(d) { return "white"; });
+
+        //
+        g.selectAll(".domain").style("display","none")
+    });
+
+</script>

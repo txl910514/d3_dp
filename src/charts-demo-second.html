@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>arc</title>
+    <style>
+        body {
+            /*background: #1f2a33;*/
+        }
+
+
+        .container {
+            margin: 30px auto;
+            width: 600px;
+            height: 300px;
+            border: 1px solid #000;
+        }
+        .axis path,
+        .axis line {
+            stroke: #000;
+            fill: none;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <svg width="100%" height="100%"></svg>
+</div>
+</body>
+<script type="text/javascript" src="http://d3js.org/d3.v4.min.js"></script>
+<script>
+
+
+
+
+    var width = 600, height = 300;
+    // SVG画布边缘与图表内容的距离
+    var padding = { top: 50, right: 50, bottom: 50, left: 50 };
+
+    // 创建一个分组用来组合要画的图表元素
+    var main = d3.select('.container svg').append('g')
+            .classed('main', true)
+            .attr('transform', "translate(" + padding.top + ',' + padding.left + ')');
+    // 模拟数据
+    var dataset = {
+        x: ["赵","钱","孙","李","周","吴","郑","王"],
+        y: [40, 30, 50, 70, 90, 20, 10, 40]
+    };
+
+    var range_width=width-padding.left-padding.right;
+    var range_Height=height-padding.top-padding.bottom;
+    // 定义x轴的比例尺(序数比例尺)
+    var xScale = d3.scaleBand()
+            .domain(dataset.x)
+            .range([0, range_width]);
+    // 定义y轴的比例尺(线性比例尺)
+    var yScale = d3.scaleLinear()
+            .domain([0, d3.max(dataset.y)])
+            .range([range_Height, 0]);
+
+    //创建x轴
+    var axis = d3.axisBottom(xScale);
+
+    main.append("g").attr("class","axis--x").attr("transform","translate(0,"+range_Height+")")
+            .call(axis)
+            .selectAll(".tick text")
+            .attr("text-anchor","middle")
+//            .attr('transform','translate('+range_Height+',0)')
+            .style("fill","#899baa")
+//    // 定义x轴和y轴
+//    var xAxis = d3.svg.axis()
+//            .scale(xScale)
+//            .orient('bottom');
+//    var yAxis = d3.svg.axis()
+//            .scale(yScale)
+//            .orient('left');
+//    // 添加坐标轴元素
+//    main.append('g')
+//            .attr('class', 'axis')
+//            .attr('transform', 'translate(0,' + (height - padding.bottom - padding.top) + ')')
+//            .call(xAxis);
+//    main.append('g')
+//            .attr('class', 'axis')
+//            .call(yAxis);
+//    g.append("g").attr("class","axis--x").attr("transform","translate(0,"+yScale(0)+")")
+//            .call(xAxis)
+//            .selectAll(".tick text")
+//            .attr("text-anchor","middle")
+//            .attr('transform','translate('+(width/xLength)+',0)')
+//            .style("fill","#899baa")
+
+    //定义渐变
+    var defs = d3.select('.container svg').append("defs");
+    var linearGradient = defs.append("linearGradient")
+            .attr("id","linearColor")
+            .attr("x1","0%")
+            .attr("y1","0%")
+            .attr("x2","100%")
+            .attr("y2","0%");
+    var stop1 = linearGradient.append("stop")
+            .attr("offset","0%")
+            .style("stop-color",'#2ede7d');
+
+    var stop2 = linearGradient.append("stop")
+            .attr("offset","100%")
+            .style("stop-color",'#2ea6de');
+    var color = d3.scaleSequential(d3.interpolate("#2ede7d","#2ea6de"));
+    // 矩形之间的间距
+    var rectMargin = 10;
+    // 添加矩形
+    main.selectAll('.bar')
+            .data(dataset.y)
+            .enter()
+            .append('rect')
+            .attr('class', 'bar')
+            .attr('x', function(d, i) {
+                return xScale(dataset.x[i]) + rectMargin;
+            })
+            .attr('y', function(d, i) {
+                return yScale(d);
+            })
+            .attr('width', function(){
+                return xScale.bandwidth() - 2*rectMargin
+            })
+            .attr('height', function(d, i) {
+                return height - padding.top - padding.bottom - yScale(d);
+            })
+            .style("fill","url(#" + linearGradient.attr("id") + ")");
+
+
+
+
+</script>
+
+</html>
