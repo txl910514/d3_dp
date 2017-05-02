@@ -65,7 +65,8 @@
       .startAngle(0)
       .endAngle(function (d) {
          return (d.value / d.total) * 2 * Math.PI;
-      });
+      })
+     .cornerRadius(90);
 
    var svg = d3.select("body").append("svg")
       .attr("width", width)

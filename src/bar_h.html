@@ -31,9 +31,10 @@ svg{
         y = d3.scaleLinear().rangeRound([height, 0]);
 
     var g = svg.append("g")
-//        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     d3.tsv("bar.tsv", function(d) {
+      console.log(d);
         d.frequency = +d.frequency;
         return d;
     }, function(error, data) {
@@ -56,7 +57,7 @@ svg{
             .attr("dy", "0.71em")
             .attr("text-anchor", "end")
             .text("Frequency");
-return
+
         g.selectAll(".bar")
             .data(data)
             .enter().append("rect")

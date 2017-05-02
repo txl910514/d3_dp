@@ -323,7 +323,7 @@ data4 = {
   type:'complete_context'
 };
 
-data = data4;
+data = data2;
 
 var formatCount = d3.format(",.1f");
 

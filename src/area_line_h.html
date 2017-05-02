@@ -51,7 +51,6 @@ html{
         .paddingInner(0.7)
         .paddingOuter(0.5)
 
-
     var color = d3.scaleLinear()
         .range(["#2ea6de", "#2edd7e"])
         .interpolate(d3.interpolateRgb);
@@ -87,7 +86,7 @@ html{
 
         color.domain([0,1]);
 
-        y.domain([0, 20+d3.max(data, function(d) { return d.close; })]);
+        y.domain([0, d3.max(data, function(d) { return d.close; })]);
 
         area.y0(y(0));
         area.curve(d3.curveCatmullRom.alpha(0.5));
@@ -105,8 +104,12 @@ html{
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x))
 
-            aixB.selectAll("text").style("stroke","#899baa")
-            aixB.selectAll("line").style("display","none")
+            aixB.selectAll("text").style("stroke","#899baa");
+            aixB.selectAll("line").style("display","none");
+            aixB.selectAll('.tick')
+              .attr('transform', function (d) {
+                return "translate("+ x(d) +",0)";
+              });
 //            .attr("fill", "#899BAA");
 
         var aixL=g.append("g")
