@@ -5,7 +5,12 @@
    <meta charset="UTF-8">
    <title>arc</title>
    <style>
-      body {
+      .content {
+         background: red;
+         width: 400px;
+         height: 200px;
+      }
+      svg {
          background: #1f2a33;
       }
       
@@ -37,7 +42,7 @@
 </head>
 
 <body>
-
+<div class="content"></div>
 </body>
 <script type="text/javascript" src="js/d3.js"></script>
 <!--<script type="text/javascript" src="js/arc.js"></script>-->
@@ -46,8 +51,8 @@
    * Created by txl-pc on 2017/4/24.
    */
 
-   var width = 600,
-      height = 300;
+   var width = document.querySelector('.content').offsetWidth,
+      height = document.querySelector('.content').offsetHeight;
 
    var formatCount = d3.format(",.0f");
 
@@ -68,9 +73,9 @@
       })
      .cornerRadius(90);
 
-   var svg = d3.select("body").append("svg")
-      .attr("width", width)
-      .attr("height", height);
+   var svg = d3.select(".content").append("svg")
+      .attr("width", '100%')
+      .attr("height", '100%');
 
    var defs = svg.append("defs");
    var linearGradient = defs.append("linearGradient")
@@ -119,13 +124,7 @@
      .data(fields[0].cue)
      .enter()
      .append('text')
-     .attr('class','textLabel')
-     .attr('transform', function (d,i,m) {
-       console.log(m[i]);
-       d3.select(m[i]).classed('textLabel'+i, true);
-       return "translate(0," + 30*i + ")";
-     });
-
+     .attr('class','textLabel');
 
    var color = d3.scaleSequential(d3.interpolate("#2ede7d","#2ea6de"));
 
@@ -143,8 +142,18 @@
             return formatCount(d.value / d.total * 100) + d.label;
          });
 
-     textLabel.text(function (d) {
+     textLabel.text(function (d,i,ele) {
        return d;
+     })
+       .attr('transform', function (d,i,m) {
+         var width_text = m[i].getComputedTextLength();
+         console.log(width_text);
+         d3.select(m[i].parentNode)
+           .attr('transform', function (d) {
+             return "translate(" +  (width - width_text) + "," + height / 2 + ")";
+           })
+       d3.select(m[i]).classed('textLabel'+i, true);
+       return "translate(0," + 30*i + ")";
      });
 
       var alpha = (fields[0].value / fields[0].total) * 2 * Math.PI -  Math.PI / 2;
