@@ -97,7 +97,7 @@
         /* ------- PIE SLICES -------*/
         //console.log(pie(data));
         var slice = svg.select(".slices").selectAll("path.slice")
-            .data(pie_h(data),function (d) {
+            .data(pie(data),function (d) {
               //console.log(d);
               return d.data.label;
             });
@@ -130,7 +130,7 @@
         /* ------- TEXT LABELS -------*/
 
         var text = svg.select(".labels").selectAll("text")
-            .data(pie_h(data), key);
+            .data(pie(data), key);
 
         text.enter()
             .append("text")
@@ -153,7 +153,7 @@
                     var d2 = interpolate(t)
                     //console.log(d2);
                     var pos = outerArc.centroid(d2);
-                    console.log(pos);
+                    //console.log(pos);
                     pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
                     pos[1] = pos[1] -20
                     return "translate("+ pos +")";
@@ -175,17 +175,19 @@
         /* ------- SLICE TO TEXT POLYLINES -------*/
 
         var polyline = svg.select(".lines").selectAll("polyline")
-            .data(pie_h(data), key);
+            .data(pie(data), key);
 
         polyline.enter()
             .append("polyline");
 
         polyline.transition().duration(1000)
             .attrTween("points", function(d){
+                    //console.log(this)
                 this._current = this._current || d;
                 var interpolate = d3.interpolate(this._current, d);
                 this._current = interpolate(0);
                 return function(t) {
+                    console.log(t);
                     var d2 = interpolate(t);
                     var pos = outerArc.centroid(d2);
                     pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
@@ -199,7 +201,7 @@
 
       /*-----------DOT------------*/
         var circle = svg.select(".dots").selectAll("circle")
-            .data(pie_h(data), key);
+            .data(pie(data), key);
 
         circle.enter()
             .append("circle");
