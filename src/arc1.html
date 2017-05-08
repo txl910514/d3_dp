@@ -10,10 +10,6 @@
          width: 400px;
          height: 200px;
       }
-      svg {
-         background: #1f2a33;
-      }
-      
       .path--background {
          fill: #899baa;
          stroke: #000;
@@ -64,15 +60,18 @@
    fieldsCopy.push(fieldsJson);
    fieldsCopy[0].value = fieldsCopy[0].total;
 
+   var outerR = height /2.5 - 5;
+   var innerR = height/2.5 -10;
+
    var arc = d3.arc()
-      .innerRadius(height / 2.5 - 10)
-      .outerRadius(height / 2.5 - 5)
+      .innerRadius(innerR)
+      .outerRadius(outerR)
       .startAngle(0)
       .endAngle(function (d) {
          return (d.value / d.total) * 2 * Math.PI;
       })
      .cornerRadius(90);
-
+   console.log(arc.outerRadius());
    var svg = d3.select(".content").append("svg")
       .attr("width", '100%')
       .attr("height", '100%');
@@ -116,7 +115,7 @@
 
    var textG = svg.append('g')
      .attr('transform', function (d,i) {
-       return "translate(" +  (shifting* width + height / 2.5 + 20) + "," + height / 2 + ")";
+       return "translate(" +  (shifting* width + outerR + 20) + "," + height / 2 + ")";
      })
      .attr('class', 'textG');
 
@@ -129,8 +128,9 @@
    var color = d3.scaleSequential(d3.interpolate("#2ede7d","#2ea6de"));
 
    (function update() {
+     var old_text = 0;
       field
-         .each(function (d) { d.previous = d.value, d.value= fields[0].value  });
+         .each(function (d) { d.previous = d.value, d.value= d.value ? d.value-1:fields[0].value});
 
       path.transition()
          .ease(d3.easeElastic)
@@ -147,17 +147,23 @@
      })
        .attr('transform', function (d,i,m) {
          var width_text = m[i].getComputedTextLength();
-         console.log(width_text);
+         if(old_text < width_text) {
+           old_text = width_text;
+         }
          d3.select(m[i].parentNode)
            .attr('transform', function (d) {
-             return "translate(" +  (width - width_text) + "," + height / 2 + ")";
+             return "translate(" +  (width - old_text) + "," + height / 2 + ")";
+           })
+         svg.select('.field')
+           .attr('transform', function (d) {
+             return "translate("+(width-old_text-20-outerR)+","+ height/2 +")"
            })
        d3.select(m[i]).classed('textLabel'+i, true);
        return "translate(0," + 30*i + ")";
      });
 
-      var alpha = (fields[0].value / fields[0].total) * 2 * Math.PI -  Math.PI / 2;
-      var cx = shifting*width  + (height / 2.5 - 6) * Math.cos(alpha);
+      var alpha = (fieldsCopy[0].value / fields[0].total) * 2 * Math.PI -  Math.PI / 2;
+      var cx = width - outerR - old_text - 20   + (height / 2.5 - 6) * Math.cos(alpha);
       var cy = height / 2 + (height / 2.5 - 6) * Math.sin(alpha);
       svg.select("circle").remove();
       var circle = svg.append("circle")
@@ -174,7 +180,7 @@
               .attr("cx", cx)
               .attr("cy", cy)
 
-   /*   setTimeout(update, 5000);*/
+      setTimeout(update, 5000);
    })();
 
    function arcTween(b) {
