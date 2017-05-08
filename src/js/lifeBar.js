@@ -6,27 +6,27 @@ data1 = {
   datas: [
     {
       name:'呼吸机',
-      value:0.14
+      percent:0.14
     },
     {
       name:'血透机',
-      value:0.56
+      percent:0.56
     },
     {
       name:'心电图',
-      value:0.53578
+      percent:0.53578
     },
     {
       name:'除颤仪',
-      value:0.872
+      percent:0.872
     },
     {
       name:'麻醉机',
-      value:1
+      percent:1
     },
     {
       name:'监护仪',
-      value:0.99
+      percent:0.99
     }
   ],
   scope:[
@@ -53,7 +53,7 @@ data2 = {
   datas: [
     {
       name:'呼吸机',
-      value:10/10,
+      percent:10/10,
       data:[{
         className:'total',
         num:10
@@ -64,7 +64,7 @@ data2 = {
     },
     {
       name:'血透机',
-      value:9.6/10,
+      percent:9.6/10,
       data:[{
         className:'total',
         num:10
@@ -75,7 +75,7 @@ data2 = {
     },
     {
       name:'心电图',
-      value:8/10,
+      percent:8/10,
       data:[{
         className:'total',
         num:10
@@ -86,7 +86,7 @@ data2 = {
     },
     {
       name:'除颤仪',
-      value:7/10,
+      percent:7/10,
       data:[{
         className:'total',
         num:10
@@ -97,7 +97,7 @@ data2 = {
     },
     {
       name:'麻醉机',
-      value:6/10,
+      percent:6/10,
       data:[{
         className:'total',
         num:10
@@ -108,7 +108,7 @@ data2 = {
     },
     {
       name:'监护仪',
-      value:5/10,
+      percent:5/10,
       data:[{
         className:'total',
         num:10
@@ -144,7 +144,7 @@ data3 = {
   datas: [
     {
       name:'呼吸机',
-      value:10/10,
+      percent:10/10,
       data:[{
         className:'total',
         num:10
@@ -155,7 +155,7 @@ data3 = {
     },
     {
       name:'血透机',
-      value:9.99/10,
+      percent:9.99/10,
       data:[{
         className:'total',
         num:10
@@ -166,7 +166,7 @@ data3 = {
     },
     {
       name:'心电图',
-      value:8/10,
+      percent:8/10,
       data:[{
         className:'total',
         num:10
@@ -177,7 +177,7 @@ data3 = {
     },
     {
       name:'除颤仪',
-      value:8.88/10,
+      percent:8.88/10,
       data:[{
         className:'total',
         num:10
@@ -188,7 +188,7 @@ data3 = {
     },
     {
       name:'麻醉机',
-      value:6/10,
+      percent:6/10,
       data:[{
         className:'total',
         num:10
@@ -199,7 +199,7 @@ data3 = {
     },
     {
       name:'监护仪',
-      value:5/10,
+      percent:5/10,
       data:[{
         className:'total',
         num:10
@@ -236,7 +236,7 @@ data4 = {
   datas: [
     {
       name:'呼吸机',
-      value:10/10,
+      percent:10/10,
       data:[{
         className:'total',
         num:10
@@ -247,7 +247,7 @@ data4 = {
     },
     {
       name:'血透机',
-      value:9.6/10,
+      percent:9.6/10,
       data:[{
         className:'total',
         num:10
@@ -258,7 +258,7 @@ data4 = {
     },
     {
       name:'心电图',
-      value:8/15,
+      percent:8/15,
       data:[{
         className:'total',
         num:15
@@ -269,7 +269,7 @@ data4 = {
     },
     {
       name:'除颤仪',
-      value:7/10,
+      percent:7/10,
       data:[{
         className:'total',
         num:10
@@ -280,7 +280,7 @@ data4 = {
     },
     {
       name:'麻醉机',
-      value:6/10,
+      percent:6/10,
       data:[{
         className:'total',
         num:10
@@ -291,7 +291,7 @@ data4 = {
     },
     {
       name:'监护仪',
-      value:5/10,
+      percent:5/10,
       data:[{
         className:'total',
         num:10
@@ -350,7 +350,7 @@ var svgG = svg.append('g')
 
 var x = d3.scaleLinear().range([0, width*0.9])
   .domain([0, d3.max(data.datas,function (d) {
-    return d.value*100;
+    return d.percent*100;
   })]);
 
 var y = d3.scaleBand().rangeRound([0, height]).padding(0.85)
@@ -364,21 +364,21 @@ var bar = svgG.selectAll("g")
 
 
 bar.append("text")
-  .attr("x", function(d) { return x(d.value*100) + 3; })
+  .attr("x", function(d) { return x(d.percent*100) + 3; })
   .attr("y", y.bandwidth() / 2)
   .attr("dy", ".35em")
   .attr('class','labelText')
   .text(function(d,i,ele) {
     data.scope.map(function (scope) {
       if(typeof scope.numScope === 'number') {
-        if (d.value <= scope.numScope) {
+        if (d.percent <= scope.numScope) {
           if(typeof scope.textColor === 'string'){
             d3.select(ele[i]).style('fill', scope.textColor);
           }
         }
       }
       else if (scope.numScope.constructor === Array) {
-        if (d.value < scope.numScope[1] && d.value >= scope.numScope[0]) {
+        if (d.percent < scope.numScope[1] && d.percent >= scope.numScope[0]) {
           if(typeof scope.textColor === 'string'){
             d3.select(ele[i]).style('fill', scope.textColor);
           }
@@ -386,10 +386,10 @@ bar.append("text")
       }
 
     });
-    return formatCount(d.value*100) +'%';
+    return formatCount(d.percent*100) +'%';
   })
   .attr('transform', function (d) {
-    return "translate("+(width - x(d.value*100)-margin.left)+",0)";
+    return "translate("+(width - x(d.percent*100)-margin.left)+",0)";
   });
 
 bar.append("text")
@@ -407,7 +407,7 @@ function scope_each(ele, i, compute, colorLinear, d, figureName) {
     var parentLine = d3.select(ele[i].parentNode.parentNode);
     if (parent.classed(figureName + scope.gradualClass)) {
       if(typeof scope.numScope === 'number') {
-        if(parentLine.data()[0].value <= scope.numScope) {
+        if(parentLine.data()[0].percent <= scope.numScope) {
           if(typeof scope.barColor === 'string') {
             d3.select(ele[i]).style('fill', scope.barColor);
           }
@@ -422,7 +422,7 @@ function scope_each(ele, i, compute, colorLinear, d, figureName) {
         }
       }
       else if(scope.numScope.constructor === Array) {
-        if(parentLine.data()[0].value < scope.numScope[1] && parentLine.data()[0].value > scope.numScope[0]){
+        if(parentLine.data()[0].percent < scope.numScope[1] && parentLine.data()[0].percent > scope.numScope[0]){
           if(typeof scope.barColor === 'string') {
             d3.select(ele[i]).style('fill', scope.barColor);
           }
@@ -486,7 +486,7 @@ function complete() {
     .attr("width", function(d,i,ele) {
       data.scope.map(function (scope,m) {
         if(typeof scope.numScope === 'number') {
-          if(d.value <= scope.numScope) {
+          if(d.percent <= scope.numScope) {
             if(typeof scope.barColor === 'string') {
               d3.select(ele[i]).style('fill', scope.barColor);
             }
@@ -496,7 +496,7 @@ function complete() {
           }
         }
         else if(scope.numScope.constructor === Array) {
-          if(d.value < scope.numScope[1] && d.value > scope.numScope[0]){
+          if(d.percent < scope.numScope[1] && d.percent > scope.numScope[0]){
             if(typeof scope.barColor === 'string') {
               d3.select(ele[i]).style('fill', scope.barColor);
             }
@@ -506,7 +506,7 @@ function complete() {
           }
         }
       });
-      return x(d.value*100);
+      return x(d.percent*100);
     })
     .attr("height", y.bandwidth())
     .attr('ry', 4)
