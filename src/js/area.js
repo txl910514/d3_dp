@@ -5,31 +5,31 @@
 var data = [
   {
     name:'呼吸机1',
-    value:116
+    value:90
   },
   {
     name:'呼吸机2',
-    value:123
+    value:40
   },
   {
     name:'呼吸机3',
-    value:197
+    value:70
   },
   {
     name:'呼吸机h',
-    value:156
+    value:60
   },
   {
     name:'呼吸机4',
-    value:138
+    value:80
   },
   {
     name:'呼吸机5',
-    value:127
+    value:20
   },
   {
     name:'呼吸机6',
-    value:146
+    value:50
   }
 ]
 var svg = d3.select(".content")
