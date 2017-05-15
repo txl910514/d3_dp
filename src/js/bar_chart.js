@@ -17,6 +17,7 @@ d3.csv("/js/data.csv", function(d) {
   d.frequency = +d.frequency;
   return d;
 }, function(error, data) {
+  console.log(data)
   if (error) throw error;
 
   x.domain(data.map(function(d) { return d.letter; }));

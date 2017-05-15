@@ -63,6 +63,7 @@ var gulp = require('gulp'),
 	};
 var condition = function (file) {
 	// TODO: add business logic
+
 	var file_path = file.history[0].replace(file.cwd+'/', '');
 	if(file_path === pathConfig.src + 'js/jslib/underscore-min.js') {
 		return false;

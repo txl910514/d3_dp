@@ -184,6 +184,7 @@ var axis_y = svgG.append("g")
 axis_y.selectAll("text").style("fill","#899baa");
 axis_y.selectAll("line")
   .attr('stroke','#899baa')
+  .attr('stroke-dasharray', '10,5')
   .attr('opacity','0.2')
   .attr('transform', 'translate('+ lineMargin +',0)');
 axis_y.selectAll("path").style("display","none");
