@@ -6,16 +6,16 @@ var data = [
     state: 'AB',
     data: [
       {
-        name:'小王',
-        value:1738
+        name:'赵姓',
+        value:0.1738
       },
       {
-        name:'大王',
-        value:5476
+        name:'钱姓',
+        value:0.5476
       },
       {
-        name:'老王',
-        value:1088
+        name:'李姓',
+        value:0.1088
       }
     ]
   },
@@ -23,16 +23,16 @@ var data = [
     state: 'BC',
     data: [
       {
-        name:'小王',
-        value:1938
+        name:'赵姓',
+        value:0.1938
       },
       {
-        name:'大王',
-        value:3876
+        name:'钱姓',
+        value:0.3876
       },
       {
-        name:'老王',
-        value:988
+        name:'李姓',
+        value:0.5
       }
     ]
   },
@@ -40,16 +40,16 @@ var data = [
     state: 'CD',
     data: [
       {
-        name:'小王',
-        value:538
+        name:'赵姓',
+        value:0.538
       },
       {
-        name:'大王',
-        value:7376
+        name:'钱姓',
+        value:0.7376
       },
       {
-        name:'老王',
-        value:2688
+        name:'李姓',
+        value:0.2688
       }
     ]
   },
@@ -57,16 +57,16 @@ var data = [
     state: 'DE',
     data: [
       {
-        name:'小王',
-        value:2138
+        name:'赵姓',
+        value:0.2138
       },
       {
-        name:'大王',
-        value:6476
+        name:'钱姓',
+        value:0.6476
       },
       {
-        name:'老王',
-        value:3988
+        name:'李姓',
+        value:0.3988
       }
     ]
   },
@@ -74,16 +74,16 @@ var data = [
     state: 'EF',
     data: [
       {
-        name:'小王',
-        value:5138
+        name:'赵姓',
+        value:0.5138
       },
       {
-        name:'大王',
-        value:4876
+        name:'钱姓',
+        value:0.4876
       },
       {
-        name:'老王',
-        value:5188
+        name:'李姓',
+        value:0.5188
       }
     ]
   },
@@ -91,16 +91,16 @@ var data = [
     state: 'FG',
     data: [
       {
-        name:'小王',
-        value:6738
+        name:'赵姓',
+        value:0.6738
       },
       {
-        name:'大王',
-        value:6676
+        name:'钱姓',
+        value:0.6676
       },
       {
-        name:'老王',
-        value:5519
+        name:'李姓',
+        value:0.5519
       }
     ]
   },
@@ -113,7 +113,7 @@ var svg = d3.select(".content")
 var svgWidth = document.querySelector('.content').offsetWidth,
   svgHeight = document.querySelector('.content').offsetHeight;
 
-var margin = {left:50, top:10, bottom:20, right:10},
+var margin = {left:50, top:10, bottom:50, right:10},
   width = svgWidth - margin.left - margin.right,
   height = svgHeight - margin.top - margin.bottom;
 
@@ -146,12 +146,13 @@ y.domain([0, d3.max(data, function(d) {
   return d3.max(d.data, function(m) { return m.value });
 })]).nice();
 
-g.append("g")
+var bar = g.append("g")
   .selectAll("g")
   .data(data)
   .enter().append("g")
   .attr("transform", function(d) { return "translate(" + x0(d.state) + ",0)"; })
-  .selectAll("rect")
+
+  bar.selectAll("rect")
   .data(function(d) {
     return d.data
   })
@@ -164,6 +165,27 @@ g.append("g")
     return z(d.name);
   });
 
+bar.selectAll("text")
+  .data(function(d) {
+    return d.data
+  })
+  .enter().append("text")
+  .text(function (d) {
+    return parseFloat((d.value * 100).toFixed(1)) + '%'
+  })
+  .attr("text-anchor", "start")
+  .style('font-size', '12px')
+  .attr("x", function(d) { return x1(d.name); })
+  .attr("y", function(d) { return y(d.value)-5; })
+  .attr('transform', function (d, i, ele) {
+    var text_width = ele[i].getComputedTextLength();
+    console.log(text_width)
+    return 'translate('+ (x1.bandwidth() - text_width) / 2 +',0)'
+  })
+  .attr("fill", function(d) {
+    return z(d.name);
+  })
+
 var axis_x = g.append("g")
   .attr("class", "axis")
   .attr("transform", "translate(0," + height + ")")
@@ -175,7 +197,7 @@ axis_x.selectAll('line').style("stroke","#899baa");
 
 var axis_y = g.append("g")
   .attr("class", "axis")
-  .call(d3.axisLeft(y).ticks(null, "s"))
+  .call(d3.axisLeft(y).ticks(null, "%"))
 
 axis_y.append("text")
   .attr("x", 2)
@@ -200,13 +222,13 @@ var legend = g.append("g")
   .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
 legend.append("rect")
-  .attr("x", width - 19)
-  .attr("width", 19)
+  .attr("x", width - 28)
+  .attr("width", 28)
   .attr("height", 19)
   .attr("fill", z);
 
 legend.append("text")
-  .attr("x", width - 24)
+  .attr("x", width - 36)
   .attr("y", 9.5)
   .attr("dy", "0.32em")
   .attr('fill', '#fff')
