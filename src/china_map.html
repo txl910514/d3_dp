@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>china_map</title>
+    <style>
+       .china_map {
+           position: absolute;
+           top:0;
+           right: 0;
+           left: 0;
+           bottom: 0;
+           background: #EEB4B4;
+       }
+        .blur {
+            /*background: blue;*/
+        }
+    </style>
+</head>
+<body>
+<div class="china_map"></div>
+<script type="text/javascript" src="js/d3.js"></script>
+<script>
+    var width = d3.select('.china_map').node().offsetWidth;
+    var height = d3.select('.china_map').node().offsetHeight;
+    var svg = d3.select('.china_map')
+      .append('svg')
+      .attr('width', '100%')
+      .attr('height', '100%');
+
+    var defs = svg.append('defs');
+    var filter = defs.append('filter')
+      .attr('id', 'myfilter')
+    filter.append('feMorphology')
+      .attr('operator', 'dilate')
+      .attr('radius', 0.5)
+      .attr('in', 'SourceGraphic')
+      .attr('result', 'BEVEL_10')
+    filter.append('feColorMatrix')
+      .attr('type', 'matrix')
+      .attr('values', '0 0 0 0 0,0 255 0 0 0,0 0 255 0 0,0 0 0 0.7 0')
+      .attr('result', 'matrixColor')
+    filter.append('feGaussianBlur')
+      .attr('stdDeviation', '16')
+      .attr('class', 'blur')
+      .attr('in', 'matrixColor')
+      .attr('result', 'coloredBlur')
+      .attr('filterUnits', 'userSpaceOnUse')
+    var feMerge = filter.append('feMerge')
+    feMerge.append('feMergeNode')
+      .attr('in', 'coloredBlur');
+    feMerge.append('feMergeNode')
+      .attr('in', 'SourceGraphic');
+
+
+
+    var projection = d3.geoMercator()
+      .center([107, 38])
+      .scale(710)
+      .translate([width/2, height/2]);
+    var path = d3.geoPath()
+      .projection(projection);
+
+    d3.json("js/china_simplify.json", function(error, root) {
+
+      if (error)
+        return console.error(error);
+      svg
+        .append('g')
+        .selectAll("path")
+        .data( root.features )
+        .enter()
+        .append("path")
+        .attr('fill', '#00FFFF')
+        .attr('stroke', '#fff')
+        .attr('filter', 'url(#myfilter)')
+        .attr('opacity', 1)
+        .attr("d", function (d) {
+          return path(d)
+        } )
+
+    });
+</script>
+</body>
+</html>

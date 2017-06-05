@@ -24,7 +24,9 @@
     display: flex;
     flex-direction: column;
     background: #111111;
-    flex-flow: row nowrap;
+    overflow: hidden;
+
+    //flex-flow: row nowrap;
   }
   .sp_two {
     flex: 2;
@@ -88,9 +90,11 @@
     }
   }
   .two {
-    flex: 1;
-    background: #931396;
+    flex: 1 1 auto;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+    background: #931396;
   }
   .three {
     flex: 1;
@@ -118,7 +122,6 @@
     justify-content:center;
     .inline-flex {
       display: inline-flex;
-
     }
   }
 }
