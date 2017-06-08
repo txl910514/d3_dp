@@ -33,7 +33,7 @@
       .attr('id', 'myfilter')
     filter.append('feMorphology')
       .attr('operator', 'dilate')
-      .attr('radius', 4)
+      .attr('radius', 3)
       .attr('in', 'SourceGraphic')
       .attr('result', 'jiaChu')
 //    filter.append('feColorMatrix')
@@ -53,8 +53,8 @@
       .attr('in', 'jiaChu')
       .attr('result', 'tyM')
     filter.append('feOffset')
-      .attr('dy', 8)
-      .attr('dx', 8)
+      .attr('dy', 6)
+      .attr('dx', 6)
       .attr('in', 'tyM')
       .attr('result', 'offset')
     filter.append('feComposite')
@@ -86,7 +86,7 @@
     var path = d3.geoPath()
       .projection(projection);
 
-    d3.json("js/china1.json", function(error, root) {
+    d3.json("js/china_border.json", function(error, root) {
 
       if (error)
         return console.error(error);
@@ -97,7 +97,7 @@
         .data( root)
         .enter()
         .append("path")
-        .attr('fill', 'transparent')
+        .attr('fill', 'none')
         .attr('stroke', '#fff')
         // .attr('filter', 'url(#myfilter)')
         .attr('opacity', 1)

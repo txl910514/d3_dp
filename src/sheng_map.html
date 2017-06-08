@@ -53,8 +53,8 @@
       .attr('in', 'jiaChu')
       .attr('result', 'tyM')
     filter.append('feOffset')
-      .attr('dy', 8)
-      .attr('dx', 8)
+      .attr('dy', 5)
+      .attr('dx', 5)
       .attr('in', 'tyM')
       .attr('result', 'offset')
     filter.append('feComposite')
@@ -80,13 +80,13 @@
 
 
     var projection = d3.geoMercator()
-      .center([107, 38])
-      .scale(710)
+      .center([0, 44])
+      .scale(173)
       .translate([width/2, height/2]);
     var path = d3.geoPath()
       .projection(projection);
 
-    d3.json("js/china1.json", function(error, root) {
+    d3.json("js/world.geo.json", function(error, root) {
 
       if (error)
         return console.error(error);
@@ -94,29 +94,29 @@
       svg
         .append('g')
         .selectAll("path")
-        .data( root)
+        .data( root.features )
         .enter()
         .append("path")
-        .attr('fill', 'transparent')
+        .attr('fill', '#00FFFF')
         .attr('stroke', '#fff')
-        // .attr('filter', 'url(#myfilter)')
+        .attr('filter', 'url(#myfilter)')
         .attr('opacity', 1)
         .attr("d", function (d) {
           return path(d)
         } )
 
-//      svg
-//        .append('g')
-//        .selectAll("path")
-//        .data(root)
-//        .enter()
-//        .append("path")
-//        .attr('fill', '#00FFFF')
-//        .attr('stroke', '#fff')
-//        .attr('opacity', 1)
-//        .attr("d", function (d) {
-//          return path(d)
-//        })
+      svg
+        .append('g')
+        .selectAll("path")
+        .data( root.features )
+        .enter()
+        .append("path")
+        .attr('fill', '#00FFFF')
+        .attr('stroke', '#fff')
+        .attr('opacity', 1)
+        .attr("d", function (d) {
+          return path(d)
+        })
 
     });
 </script>

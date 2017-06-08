@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "gulp --pub test -w -s"
+    "test": "gulp --pub test -w -s",
+    "fs_zh": "node fs_server/data_zh.js"
   },
   "author": "",
   "license": "ISC",
