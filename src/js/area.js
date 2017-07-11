@@ -124,7 +124,8 @@ svgG.append('g')
   .attr("d", area)
   .style('fill','url(#'+ areaGradient.attr("id") +')');
 
-svgG.append('g')
+svgG
+  .append('g')
   .attr('class', 'line')
   .append("path")
   .datum(data)

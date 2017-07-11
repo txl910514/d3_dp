@@ -168,8 +168,8 @@ var axis_x = svgG.append("g")
   .call(d3.axisBottom(x));
 
 axis_x.selectAll("text").style("fill","#899baa");
-axis_x.selectAll("line").style("display","none");
-axis_x.selectAll("path").style("display","none");
+// axis_x.selectAll("line").style("display","none");
+// axis_x.selectAll("path").style("display","none");
 /*axis_x.selectAll('.tick')
  .attr('transform', function (d) {
  return "translate("+ x(d) +",0)";
