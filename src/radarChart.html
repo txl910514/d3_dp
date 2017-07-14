@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>雷达图</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <style>
+        body {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top:0;
+        }
         .container {
             position: absolute;
             left: 0;
             right: 0;
             bottom: 0;
             top:0;
-            background: #16eae6;
-        }
-        .webs polygon {
-            fill: white;
-            fill-opacity: 0.5;
-            stroke: gray;
+            background: rgba(32,202,242, 0.1);
         }
         .lines line {
             fill: white;
@@ -28,7 +31,7 @@
     <div class="container">
 
     </div>
-    <script type="text/javascript" src="http://d3js.org/d3.v4.min.js"></script>
+    <script type="text/javascript" src="js/d3.js"></script>
     <script type="text/javascript" src="js/radarChart.js"></script>
 </body>
 </html>
