@@ -3,27 +3,27 @@
  */
 var data = [
   {
-    name: '品牌1品牌1',
+    name: '品牌A',
     value: 0.16
   },
   {
-    name: '品牌1',
+    name: '品牌B',
     value: 0.19
   },
   {
-    name: '品牌1品牌1',
+    name: '品牌C',
     value: 0.18
   },
   {
-    name: '品牌1',
+    name: '品牌D',
     value: 0.14
   },
   {
-    name: '品牌1品牌1',
+    name: '品牌E',
     value: 0.13
   },
   {
-    name: '品牌1',
+    name: '品牌F',
     value: 0.2
   }
 ]
@@ -50,7 +50,6 @@ var radius = d3.min([svgHeight, svgWidth]) / 2,
     return d.value
   }),
   arc = 2 * Math.PI;
-console.log(d3.min([svgHeight, svgWidth]))
 // 每项指标所在的角度
 var onePiece = arc/total;
 // 计算网轴的正多边形的坐标
@@ -58,14 +57,13 @@ var polygons = {
   webs: [],
   webPoints: []
 };
-console.log(polygons)
 for(var k=level;k>0;k--) {
   var webs = '',
     webPoints = [];
   var r = radius/level * k;
   for(var i=0;i<total;i++) {
-    var x = r * Math.sin(i * onePiece + onePiece / 2),
-      y = r * Math.cos(i * onePiece + onePiece / 2);
+    var x = r * Math.sin(-i * onePiece + 5 * onePiece / 2),
+      y = r * Math.cos(-i * onePiece + 5 * onePiece / 2);
     webs += x + ',' + y + ' ';
     webPoints.push({
       x: x,
@@ -75,6 +73,7 @@ for(var k=level;k>0;k--) {
   polygons.webs.push(webs);
   polygons.webPoints.push(webPoints);
 }
+console.log(polygons)
 
 var webG = main.append('g')
   .attr('class', 'webs');
@@ -107,8 +106,7 @@ webG.selectAll('polygon')
     else {
       return 'none'
     }
-  })
-;
+  });
 
 var lines = main.append('g')
   .attr('class', 'lines');
@@ -146,8 +144,8 @@ var area = '',
   points = [];
 for(var k=0;k<total;k++) {
   var r = radius * (data[k].value - rangeMin)/(rangeMax - rangeMin);
-  var x = r * Math.sin(k * onePiece + onePiece / 2),
-    y = r * Math.cos(k * onePiece + onePiece / 2);
+  var x = r * Math.sin(-k * onePiece + 5 * onePiece / 2),
+    y = r * Math.cos(-k * onePiece + 5 * onePiece / 2);
   area += x + ',' + y + ' ';
   points.push({
     x: x,
@@ -209,6 +207,7 @@ names.selectAll('text')
   .data(polygons.webPoints[0])
   .enter()
   .append('text')
+  .attr('fill', '#70DAFD')
   .attr('class', function (d, i) {
     return 'name' + i
   })
@@ -239,6 +238,7 @@ percents.selectAll('text')
   .text(function (d, i) {
     return parseFloat((data[i].value * 100).toFixed(1)) + '%'
   })
+  .attr('fill', '#70DAFD')
   .attr('x', function(d, i, ele) {
     var x = 0
     if ((i * onePiece + onePiece / 2) > Math.PI) {
