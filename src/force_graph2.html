@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            position: absolute !important;
+            top:0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+        }
+        .content {
+            position: absolute;
+            top:0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        .links line {
+            stroke: #6f879b;
+            stroke-opacity: 0.6;
+        }
+
+        .nodes circle {
+            /*stroke: #fff;*/
+            /*stroke-width: 1.5px;*/
+        }
+
+    </style>
+</head>
+<body>
+<!--http://www.cnblogs.com/xcxcxcxc/p/5900444.html-->
+<div class="content">
+    <svg width="100%" height="100%"></svg>
+</div>
+<script type="text/javascript" src="js/d3.js"></script>
+<script>
+    var color = {
+      'hospital': '#199',
+      'site': '#192'
+    }
+  var graph = {
+    "nodes": [
+      {"id": 5, "name": '医院', value: 50, key: 'hospital', keyName: '医院'},
+      {"id":9, "name": '经销商', value: 90, key: 'hospital', keyName: '医院'},
+      {"id":19, "name": 'x经销商', value: 90, key: 'site', keyName: '站点'},
+      {"id":29, "name": 'xx经销商', value: 40, key: 'site', keyName: '站点'},
+      {"id":39, "name": 'xxx经销商', value: 20, key: 'hospital', keyName: '医院'}
+    ],
+    "links": [
+      {"source": 5, "target": 9, "value": 50},
+      {"source": 5, "target": 19, "value": 30},
+      {"source": 5, "target": 29, "value": 40},
+      {"source": 5, "target": 39, "value": 20}
+    ]
+  }
+  var nodeMax = d3.max(graph.nodes, function (d) {
+    return d.value
+  })
+    var nodeMin = d3.min(graph.nodes, function (d) {
+      return d.value
+    })
+    var linkMax = d3.max(graph.links, function (d) {
+      return d.value
+    })
+    var linkMin = d3.min(graph.links, function (d) {
+      return d.value
+    })
+
+    var nodeScale = d3.scaleLinear().domain([nodeMin, nodeMax])
+      .range([5, 10])
+    var linkScale = d3.scaleLinear().domain([linkMin, linkMax])
+      .range([2, 5])
+  var svg = d3.select("svg"),
+    content = d3.select(".content"),
+    width = +content.node().offsetWidth,
+    height = +content.node().offsetHeight;
+
+  var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+    .force("collide",d3.forceCollide( function(d){
+      console.log(d)
+      return nodeScale(d.value) + 38 }).iterations(46)
+    )
+    .force("charge", d3.forceManyBody())
+    .force("center", d3.forceCenter(width / 2, height / 2));
+
+  var link = svg.append("g")
+    .attr("class", "links")
+    .selectAll("line")
+    .data(graph.links)
+    .enter().append("line")
+    .attr("stroke-width", function(d) { return linkScale(d.value); });
+
+  var node = svg.append("g")
+    .attr("class", "nodes")
+    .selectAll("circle")
+    .data(graph.nodes)
+    .enter().append("circle")
+    .attr("r", function (d) {
+      return nodeScale(d.value)
+    })
+    .attr("fill", function(d) { return color[d.key]; })
+
+  node.append("title")
+    .text(function(d) { return d.id; });
+
+  simulation
+    .nodes(graph.nodes)
+    .on("tick", ticked);
+
+  simulation.force("link")
+    .links(graph.links);
+
+  function ticked() {
+    link
+      .attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+
+    node
+      .attr("cx", function(d) { return d.x; })
+      .attr("cy", function(d) { return d.y; });
+  }
+</script>
+</body>
+</html>

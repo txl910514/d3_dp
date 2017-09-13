@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            margin:0;
+            position:fixed;
+            top:0;
+            right:0;
+            bottom:0;
+            left:0;
+            font-family: sans-serif;
+        }
+        .selected {
+            fill: none;
+        }
+
+        .links line {
+            stroke: #000;
+            stroke-width: 3px;
+        }
+
+        .button {
+            min-width: 130px;
+            padding: 4px 5px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 13px;
+            border: 1px solid #e0e0e0;
+            text-decoration: none;
+        }
+
+        .button.active {
+            background: #000;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div id="toolbar">
+    <button id="all" class="button">All</button>
+    <button id="Location" class="button">By Location</button>
+    <button id="Org" class="button active">By Org</button>
+    <button id="Type" class="button">By Type</button>
+</div>
+<script type="text/javascript" src="js/d3.js"></script>
+<script>
+
+</script>
+</body>
+</html>
