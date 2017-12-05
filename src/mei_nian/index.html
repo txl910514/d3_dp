@@ -26,9 +26,48 @@
 <script type="text/javascript" src="../js/echarts/echarts.min.js"></script>
 <script type="text/javascript">
   // 基于准备好的dom，初始化echarts实例
+  var color = ['#ffed86', '#feae8b', '#8ee7db']
   var data = {
-    x_data: ['1月', '2月', '3月', '4月', '5月', '6月']
+    x_data: ['1月', '2月', '3月', '4月', '5月', '6月'],
+    y_data: [
+      {
+        name: '数据a',
+        data: [5, 20, 36, 10, 10, 20]
+      },
+      {
+        name: '数据b',
+        data: [15, 120, 136, 103, 110, 320]
+      },
+      {
+        name: '数据c',
+        data: [45, 90, 26, 80, 40, 140]
+      }
+    ]
   }
+  var legendData = []
+  var series_data = []
+  data.y_data.forEach(function (y_line, i) {
+    legendData.push({
+      name: y_line.name,
+      textStyle: {
+        color: color[i]
+      }
+    })
+    series_data.push({
+      name: y_line.name,
+      data: y_line.data,
+      type: 'line',
+      symbolSize: 0,
+      showSymbol:false,
+      smooth: true,
+      areaStyle: {
+        normal: {
+          color:color[i],
+          opacity: 0.5
+        }
+      }
+    })
+  })
   var myChart = echarts.init(document.querySelector('.line_echarts'));
 
   // 指定图表的配置项和数据
@@ -37,14 +76,46 @@
       text: '月质控统计(单位：台)',
       textStyle: {
         color: '#59cfff'
-      }
+      },
+      left: '3%',
+      top:20
     },
-    tooltip: {},
     legend: {
-      data:['数据a', '数据b', '数据c']
+      data:legendData,
+      top: 20,
+      right: '4%',
+      itemGap: 45
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      containLabel: true
     },
     xAxis: {
       data: data.x_data,
+      boundaryGap : false,
+      splitLine: {
+        show: true,
+        lineStyle: {
+          width: 2,
+          color: '#296188'
+        }
+      },
+      axisTick: {
+        show: false
+      },
+      axisLine: {
+        lineStyle: {
+          width: 1,
+          color: '#296188'
+        }
+      },
+      splitArea: {
+        show: true,
+        areaStyle: {
+          color: ['rgba(0,0,0,0)', 'rgba(18,61,103,0.6)'],
+        }
+      },
       axisLabel: {
         textStyle: {
           color: '#59cfff'
@@ -56,34 +127,27 @@
         textStyle: {
           color: '#59cfff'
         }
-      }
-    },
-    series: [{
-      name: '数据a',
-      type: 'line',
-      symbolSize: 0,
-      showSymbol:false,
-      smooth: true,
-      data: [5, 20, 36, 10, 10, 20]
-    },
-      {
-        name: '数据b',
-        type: 'line',
-        symbolSize: 0,
-        showSymbol:false,
-        smooth: true,
-        data: [15, 120, 136, 103, 110, 320]
       },
-      {
-        name: '数据c',
-        type: 'line',
-        symbolSize: 0,
-        showSymbol:false,
-        smooth: true,
-        data: [45, 90, 26, 80, 40, 140]
+      axisTick: {
+        show: false
+      },
+      splitLine: {
+        show: true,
+        lineStyle: {
+          width: 2,
+          color: '#296188'
+        }
+      },
+      axisLine: {
+        lineStyle: {
+          width: 1,
+          color: '#296188'
+        }
       }
-    ],
-    color: ['#ffed86', '#feae8b', '#8ee7db']
+    },
+    series: series_data,
+    color: ['#ffed86', '#feae8b', '#8ee7db'],
+    animationDuration: 1200
   };
 
   // 使用刚指定的配置项和数据显示图表。
